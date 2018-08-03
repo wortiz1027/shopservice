@@ -1,0 +1,73 @@
+# +-----------------------------------------------------
+# |         SERVER CONFIG
+# +-----------------------------------------------------
+server:
+  port: 8098
+  servlet:
+    context-path: /shopservice
+    session:
+      cookie:
+        name: UISESSION
+
+# +-----------------------------------------------------
+# |         JPA AND DATABASE CONFIG
+# +-----------------------------------------------------
+spring:
+  application:
+    name: shopservice
+  profiles:
+    active:
+      - development
+      - quality
+      - production
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database: MySQL
+    open-in-view: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+        generate_statistic: true
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+  datasource:
+    url: jdbc:mysql://centos-apps:6603/salesmodels?verifyServerCertificate=false&useSSL=false&requireSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+    username: developer
+    password: developer
+    platform: MySQL
+    hikari:
+      data-source-properties:
+        cachePrepStmts: true
+        useServerPrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useLocalSessionState: true
+        useLocalTransactionState: true
+        rewriteBatchedStatements: true
+        cacheResultSetMetadata: true
+        cacheServerConfiguration: true
+        elideSetAutoCommits: true
+        maintainTimeStats: false
+      pool-name: mypoolconection
+      connection-timeout: 60000
+      maximum-pool-size: 5
+  jmx:
+    default-domain: startertest
+
+# +-----------------------------------------------------
+# |         LOGGIN CONFIG
+# +-----------------------------------------------------
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.data: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file: /tmp/shopservice.log
