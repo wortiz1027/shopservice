@@ -15,6 +15,7 @@ def testSummary = ""
 def total = 0
 def failed = 0
 def skipped = 0
+def failedTestsString = "```"
 
 def notification(String type, String status) {
     switch(type) {
@@ -73,8 +74,7 @@ def getTestSummary = { ->
 
 @NonCPS
 def getFailedTests = { ->
-    def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
-    def failedTestsString = "```"
+    def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)    
 
     if (testResultAction != null) {
         def failedTests = testResultAction.getFailedTests()
@@ -115,6 +115,7 @@ node {
             echo 'Iniciando configuracion...' 
             populateGlobalVariables()  
             def buildStatus = currentBuild.result == null ? "Success" : currentBuild.result 
+            
             try {
                                         
                         notification("",
