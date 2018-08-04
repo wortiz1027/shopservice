@@ -16,6 +16,11 @@ def total = 0
 def failed = 0
 def skipped = 0
 
+def buildColor = "success"
+def jobName = "${env.JOB_NAME}"
+
+jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
+
 def notification(String type, String status) {
     switch(type) {
         case "slack" : slack_notification(text, channel, attachments)
@@ -101,12 +106,6 @@ pipeline {
 
     agent any
 
-    def buildColor = "success"
-    def jobName = "${env.JOB_NAME}"
-
-    jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
-    populateGlobalVariables()
-
     tools {
         jdk 'Jdk_8_181'
         maven 'Maven_3_5_4'
@@ -117,7 +116,8 @@ pipeline {
         stage('setup') {            
             steps {
                 try {
-                    echo 'Iniciando configuracion...'                    
+                    echo 'Iniciando configuracion...' 
+                    populateGlobalVariables()                   
                     notification("",
                                 channel,
                                 [
