@@ -109,13 +109,12 @@ pipeline {
     stages {
 
         stage('setup') {
+            def buildColor = "succes"
+            def jobName = "${env.JOB_NAME}"
+
+            jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
+            populateGlobalVariables()
             steps {
-                def buildColor = "succes"
-                def jobName = "${env.JOB_NAME}"
-
-                jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
-                populateGlobalVariables()
-
                 try {
                     echo 'Iniciando configuracion...'
                     buildColor = "danger"
