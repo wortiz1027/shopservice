@@ -115,8 +115,6 @@ node {
 
         stage('setup') { 
             try {
-                steps {
-                    
                         echo 'Iniciando configuracion...' 
                         populateGlobalVariables()                   
                         notification("",
@@ -158,7 +156,6 @@ node {
                                         
                                     ]
                                     ])
-                } // fin steps
             } catch (err) {
                         buildColor = "danger"
                         notification("",
@@ -204,7 +201,7 @@ node {
         }// fin stage setup
     
         stage('test') {
-            steps {
+           /* steps {
                 parallel{
                     stage('unit-test') {
                             try {
@@ -222,31 +219,31 @@ node {
                             }
                      }
                 }
-            }            
+            }    */        
         }
 
         stage('build') {
-            steps {
+            /*steps {
                 echo 'Ejecutando build...'    
-            }            
+            } */           
         }
 
         stage('archive') {
-            steps {
+            /*steps {
                 echo 'Archivando artefacto en el repositorio...'   
-            }            
+            }  */          
         }
 
         stage('deploy') {
-            steps {
+            /*steps {
                 echo 'Desplegando artefacto...'    
-            }            
+            } */           
         }
 
         stage('notification') {
-            steps {
+           /* steps {
                 echo 'Notificando resultados...'    
-            }            
+            }*/            
         }
   
 
