@@ -5,7 +5,7 @@ pipeline {
     stages {
 
         stage('setup') {
-            stpes {
+            steps {
                 echo 'Iniciando configuracion...'
             }
         }
