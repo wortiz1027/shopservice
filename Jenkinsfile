@@ -111,6 +111,10 @@ node {
 
         jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
+        stage("Post to Slack") {
+                notifySlack("Success!", channel, [])
+            }
+
         stage('setup') { 
             echo 'Iniciando configuracion...' 
             populateGlobalVariables()  
