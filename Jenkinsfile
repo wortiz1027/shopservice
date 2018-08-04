@@ -104,14 +104,14 @@ def populateGlobalVariables = {
 
 node {
 
-    agent any
+    /*agent any
 
     tools {
         jdk 'Jdk_8_181'
         maven 'Maven_3_5_4'
-    }
+    }*/
 
-    stages {
+    
 
         stage('setup') { 
             try {
@@ -248,12 +248,12 @@ node {
                 echo 'Notificando resultados...'    
             }            
         }
-    }
+  
 
-    post {
+    /*post {
         always {
             notification("slack", currentBuild.currentResult)
             cleanWs()
         }
-    }
+    }*/
 }
