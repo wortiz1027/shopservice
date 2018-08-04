@@ -204,23 +204,19 @@ pipeline {
 
         stage('test') {
             steps {
-                parallel 'unit-test' : {
-                            stage('exec-unit-test') {
-                                 try {
-                                     echo 'Ejecutando pruebas unitarias...'
-                                 } catch(err) {
-                                     throw err
-                                 }   
-                            }
+                parallel 'unit-test' : {                            
+                            try {
+                                echo 'Ejecutando pruebas unitarias...'
+                            } catch(err) {
+                                throw err
+                            }                               
                      },
-                     'integration-test' : {
-                            stage('exec-integration-test') {
-                                try {
-                                     echo 'Ejecutando pruebas de integracion...'
-                                 } catch(err) {
-                                     throw err   
-                                 }   
-                            }                                     
+                     'integration-test' : {                            
+                            try {
+                                echo 'Ejecutando pruebas de integracion...'
+                            } catch(err) {
+                                throw err   
+                            }                                                                   
                      }
             }            
         }
