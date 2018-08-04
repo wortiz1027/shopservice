@@ -102,7 +102,7 @@ def populateGlobalVariables = {
     testSummary = getTestSummary()
 }
 
-pipeline {
+node {
 
     agent any
 
@@ -114,7 +114,7 @@ pipeline {
     stages {
 
         stage('setup') { 
-            try {           
+            try {
                 steps {
                     
                         echo 'Iniciando configuracion...' 
