@@ -101,6 +101,12 @@ pipeline {
 
     agent any
 
+    def buildColor = "success"
+    def jobName = "${env.JOB_NAME}"
+
+    jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
+    populateGlobalVariables()
+
     tools {
         jdk 'Jdk_8_181'
         maven 'Maven_3_5_4'
@@ -108,55 +114,49 @@ pipeline {
 
     stages {
 
-        stage('setup') {
-            def buildColor = "succes"
-            def jobName = "${env.JOB_NAME}"
-
-            jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
-            populateGlobalVariables()
+        stage('setup') {            
             steps {
                 try {
-                    echo 'Iniciando configuracion...'
-                    buildColor = "danger"
-                        notification("",
-                                     channel,
-                                     [
-                                        [
-                                            title: "${jobName}, build #${env.BUILD_NUMBER}",
-                                            title_link: "${env.BUILD_URL}",
-                                            color: "${buildColor}",
-                                            text: "${buildStatus}\n${author}",
-                                            "mrkdwn_in": [
-                                            "fields"
-                                            ],
-                                            fields: [
-                                            [
-                                                title: "Branch",
-                                                value: "${env.GIT_BRANCH}",
-                                                short: true
-                                            ],
-                                            [
-                                                title: "Test Results",
-                                                value: "${testSummary}",
-                                                short: true
-                                            ],
-                                            [
-                                                title: "Last Commit",
-                                                value: "${message}",
-                                                short: false
-                                            ]
-                                            ]
-                                        ],
-                                        [
-                                            title: "Failed Tests",
-                                            color: "${buildColor}",
-                                            text: "${failedTestsString}",
-                                            "mrkdwn_in": [
-                                            "text"
-                                            ],
-                                            
-                                        ]
-                                        ])
+                    echo 'Iniciando configuracion...'                    
+                    notification("",
+                                channel,
+                                [
+                                [
+                                    title: "${jobName}, build #${env.BUILD_NUMBER}",
+                                    title_link: "${env.BUILD_URL}",
+                                    color: "${buildColor}",
+                                    text: "${buildStatus}\n${author}",
+                                    "mrkdwn_in": [
+                                    "fields"
+                                    ],
+                                    fields: [
+                                    [
+                                        title: "Branch",
+                                        value: "${env.GIT_BRANCH}",
+                                        short: true
+                                    ],
+                                    [
+                                        title: "Test Results",
+                                        value: "${testSummary}",
+                                        short: true
+                                    ],
+                                    [
+                                        title: "Last Commit",
+                                        value: "${message}",
+                                        short: false
+                                    ]
+                                    ]
+                                ],
+                                [
+                                    title: "Failed Tests",
+                                    color: "${buildColor}",
+                                    text: "${failedTestsString}",
+                                    "mrkdwn_in": [
+                                    "text"
+                                    ],
+                                    
+                                ]
+                                ])
                 } catch (err) {
                         buildColor = "danger"
                         notification("",
