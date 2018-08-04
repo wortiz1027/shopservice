@@ -32,7 +32,7 @@ def slack_notification(text, channel, attachments) {
     def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png'
 
     def payload = JsonOutput.toJson([
-                                     token: token,
+                                     token: "xils32v8TPRCgFooMC3P5iqN",
                                      text: text,
                                      channel  : channel,
                                      username : "Jenkins",
