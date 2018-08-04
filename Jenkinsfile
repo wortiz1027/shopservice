@@ -16,7 +16,7 @@ def total = 0
 def failed = 0
 def skipped = 0
 def failedTestsString = "```"
-def SLACK_TOKEN = "xils32v8TPRCgFooMC3P5iqN"
+def token = "xils32v8TPRCgFooMC3P5iqN"
 
 def notification(String type, String status) {
     switch(type) {
@@ -32,7 +32,7 @@ def slack_notification(text, channel, attachments) {
     def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png'
 
     def payload = JsonOutput.toJson([
-                                     token: SLACK_TOKEN,
+                                     token: token,
                                      text: text,
                                      channel  : channel,
                                      username : "Jenkins",
