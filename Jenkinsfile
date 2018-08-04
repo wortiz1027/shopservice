@@ -113,55 +113,57 @@ pipeline {
 
     stages {
 
-        stage('setup') {            
-            steps {
-                try {
-                    echo 'Iniciando configuracion...' 
-                    populateGlobalVariables()                   
-                    notification("",
-                                channel,
-                                [
-                                [
-                                    title: "${jobName}, build #${env.BUILD_NUMBER}",
-                                    title_link: "${env.BUILD_URL}",
-                                    color: "${buildColor}",
-                                    text: "${buildStatus}\n${author}",
-                                    "mrkdwn_in": [
-                                    "fields"
-                                    ],
-                                    fields: [
+        stage('setup') { 
+            try {           
+                steps {
+                    
+                        echo 'Iniciando configuracion...' 
+                        populateGlobalVariables()                   
+                        notification("",
+                                    channel,
                                     [
-                                        title: "Branch",
-                                        value: "${env.GIT_BRANCH}",
-                                        short: true
+                                    [
+                                        title: "${jobName}, build #${env.BUILD_NUMBER}",
+                                        title_link: "${env.BUILD_URL}",
+                                        color: "${buildColor}",
+                                        text: "${buildStatus}\n${author}",
+                                        "mrkdwn_in": [
+                                        "fields"
+                                        ],
+                                        fields: [
+                                        [
+                                            title: "Branch",
+                                            value: "${env.GIT_BRANCH}",
+                                            short: true
+                                        ],
+                                        [
+                                            title: "Test Results",
+                                            value: "${testSummary}",
+                                            short: true
+                                        ],
+                                        [
+                                            title: "Last Commit",
+                                            value: "${message}",
+                                            short: false
+                                        ]
+                                        ]
                                     ],
                                     [
-                                        title: "Test Results",
-                                        value: "${testSummary}",
-                                        short: true
-                                    ],
-                                    [
-                                        title: "Last Commit",
-                                        value: "${message}",
-                                        short: false
+                                        title: "Failed Tests",
+                                        color: "${buildColor}",
+                                        text: "${failedTestsString}",
+                                        "mrkdwn_in": [
+                                        "text"
+                                        ],
+                                        
                                     ]
-                                    ]
-                                ],
-                                [
-                                    title: "Failed Tests",
-                                    color: "${buildColor}",
-                                    text: "${failedTestsString}",
-                                    "mrkdwn_in": [
-                                    "text"
-                                    ],
-                                    
-                                ]
-                                ])
-                } catch (err) {
+                                    ])
+                } // fin steps
+            } catch (err) {
                         buildColor = "danger"
                         notification("",
-                                     channel,
-                                     [
+                                    channel,
+                                    [
                                         [
                                             title: "${jobName}, build #${env.BUILD_NUMBER}",
                                             title_link: "${env.BUILD_URL}",
@@ -198,26 +200,28 @@ pipeline {
                                             
                                         ]
                                         ])
-                }
-            }
-        }
-
+            }  // fin try - catch 
+        }// fin stage setup
+    
         stage('test') {
             steps {
-                parallel 'unit-test' : {                            
+                parallel{
+                    stage('unit-test') {
                             try {
                                 echo 'Ejecutando pruebas unitarias...'
                             } catch(err) {
                                 throw err
                             }                               
-                     },
-                     'integration-test' : {                            
+                     }
+
+                     stage('integration-test') {
                             try {
                                 echo 'Ejecutando pruebas de integracion...'
                             } catch(err) {
                                 throw err   
-                            }                                                                   
+                            }
                      }
+                }
             }            
         }
 
