@@ -203,7 +203,8 @@ pipeline {
         }
 
         stage('test') {
-            parallel 'unit-test' : {
+            steps {
+                parallel 'unit-test' : {
                             stage('exec-unit-test') {
                                  try {
                                      echo 'Ejecutando pruebas unitarias...'
@@ -221,6 +222,7 @@ pipeline {
                                  }   
                             }                                     
                      }
+            }            
         }
 
         stage('build') {
