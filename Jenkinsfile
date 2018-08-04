@@ -115,10 +115,10 @@ node {
             echo 'Iniciando configuracion...' 
             populateGlobalVariables()  
             def buildStatus = currentBuild.result == null ? "Success" : currentBuild.result 
-            
+
             try {
                                         
-                        notification("",
+                        slack_notification("",
                                     channel,
                                     [
                                     [
@@ -159,7 +159,7 @@ node {
                                     ])
             } catch (err) {
                         buildColor = "danger"
-                        notification("",
+                        slack_notification("",
                                     channel,
                                     [
                                         [
