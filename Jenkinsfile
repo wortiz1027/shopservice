@@ -5,31 +5,31 @@ pipeline {
     stages {
 
         stage('setup') {
-            echo 'Iniciando configuracion...'
+            sh "echo Iniciando configuracion..."
         }
 
         stage('test') {
-            echo 'Ejecutando pruebas unitarias...'
+            sh "echo Ejecutando pruebas unitarias..."            
         }
 
         stage('integration-test') {
-            echo 'Ejecutando pruebas de integracion...'
+            sh "echo Ejecutando pruebas de integracion..."
         }
 
         stage('build') {
-            echo 'Ejecutando build...'
+            sh "echo Ejecutando build..."
         }
 
         stage('archive') {
-            echo 'Archivando artefacto en el repositorio...'
+            sh "echo 'Archivando artefacto en el repositorio...'"
         }
 
         stage('deploy') {
-            echo 'Desplegando artefacto...'
+            sh "echo 'Desplegando artefacto...'"
         }
 
         stage('notification') {
-            echo 'Notificando resultados...'
+            sh "echo 'Notificando resultados...'"
         }
     }
 
