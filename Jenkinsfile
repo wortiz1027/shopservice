@@ -70,7 +70,15 @@ def populateGlobalVariables = {
     testSummary = getTestSummary()
 }
 
-def notification(String type, String status, String color, String text, String job_name, String author, String testSummary, String message, String failedTestsString) {
+def notification(String type, 
+                 String status, 
+                 String color, 
+                 String text, 
+                 String job_name, 
+                 String author, 
+                 String testSummary, 
+                 String message, 
+                 String failedTestsString) {
     def slackchannel = "#springboot"
     switch(type) {
         case "slack" : 
@@ -142,24 +150,24 @@ def email_notification(text, channel) {
 
 node {
     def mvnHome    = tool 'Maven_3_5_4'
-    def buildColor = "good"
+    def buildColor = currentBuild.result == null ? "good" : "warning"
     def jobName    = "${env.JOB_NAME}"
-    def url        = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
+    def git_url    = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
 
     jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
     stage('setup') { 
          
         populateGlobalVariables() 
-        sh ("echo 'Iniciando configuracion... " + author +"'") 
+        sh ("echo 'Iniciando configuracion... " + author + " " + jobName +"'") 
         def buildStatus = currentBuild.result == null ? "Success" : currentBuild.result 
 
         try {                                        
               checkout scm              
-              notification("slack", buildStatus, buildColor, "Conexion exitosa al repositorio ${url} ...", jobName, author, testSummary, message, failedTestsString)
+              notification("slack", buildStatus, buildColor, "Conexion exitosa al repositorio ${git_url} ...", jobName, author, testSummary, message, failedTestsString)
         } catch (err) {
             buildColor = "danger"
-            notification("slack", buildStatus, buildColor, "Error conectando al repositorio ${url} ...", jobName, author, testSummary, message, failedTestsString)
+            notification("slack", buildStatus, buildColor, "Error conectando al repositorio ${git_url} ...", jobName, author, testSummary, message, failedTestsString)
         }  // fin try - catch 
     }// fin stage setup
 
