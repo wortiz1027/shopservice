@@ -71,9 +71,9 @@ def populateGlobalVariables = {
 }
 
 def notification(String type, String status, String color, String text, String job_name, String author, String testSummary, String message, String failedTestsString) {
+    def slackchannel = "#springboot"
     switch(type) {
         case "slack" : 
-                      def slackchannel = "#springboot"
                       slack_notification(text,
                                          slackchannel,
                                          [
