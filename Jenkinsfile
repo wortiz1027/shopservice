@@ -174,8 +174,8 @@ node {
                             throw err   
                         }
                     }
-            }        
-    }
+    }        
+    
 
     stage('build') {
                     
