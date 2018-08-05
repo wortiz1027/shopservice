@@ -5,8 +5,8 @@ import groovy.json.JsonOutput
 import java.util.Optional
 
 import hudson.tasks.test.AbstractTestResultAction
-import hudson.model.Actionable
 import hudson.tasks.junit.CaseResult
+import hudson.model.Actionable
 
 def author      = ""
 def message     = ""
@@ -16,10 +16,13 @@ def failed      = 0
 def skipped     = 0
 def failedTestsString = "```"
 
+def isPublishingBranch = { ->
+    return env.GIT_BRANCH == 'origin/master' || env.GIT_BRANCH =~ /release.+/
+}
+
 def getGitAuthor = {
     def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
     author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
-    echo '--------------------------------------------> ${author}' 
 }
 
 def getLastCommitMessage = {
@@ -30,6 +33,7 @@ def getLastCommitMessage = {
 def getTestSummary = { ->
     def testAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
     def summary = ""
+
     if (testAction != null) {
         total   = testAction.getTotalCount()
         failed  = testAction.getFailCount()
@@ -80,17 +84,18 @@ def notification(String type,
                  String message, 
                  String failedTestsString) {
     def slackchannel = "#springboot"
+
     switch(type) {
         case "slack" : 
                       slack_notification(text,
                                          slackchannel,
                                          [
                                             [
-                                                title      : "${job_name}, build #${env.BUILD_NUMBER}",
-                                                title_link : "${env.BUILD_URL}",
-                                                color      : "${color}",
-                                                text       : "${status}\n${author}",
-                                                "mrkdwn_in": [
+                                                title       : "${job_name}, build #${env.BUILD_NUMBER}",
+                                                title_link  : "${env.BUILD_URL}",
+                                                color       : "${color}",
+                                                text        : "${status}\n${author}",
+                                                "mrkdwn_in" : [
                                                               "fields"
                                                 ],
                                                 fields: [
@@ -154,12 +159,9 @@ node {
     def jobName    = "${env.JOB_NAME}"
     def git_url    = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
 
-    //jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
-
     stage('setup') { 
          
         populateGlobalVariables() 
-        sh ("echo 'Iniciando configuracion... " + author + " " + jobName +"'") 
         def buildStatus = currentBuild.result == null ? "Success" : currentBuild.result 
 
         try {                                        
