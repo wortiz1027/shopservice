@@ -16,13 +16,13 @@ def failed      = 0
 def skipped     = 0
 def failedTestsString = "```"
 
-def slack_channel = "#springboot" 
+def slackchannel = "#springboot" 
 
 def notification(String type, String status, String color) {
     switch(type) {
         case "slack" : 
                       slack_notification("",
-                                         slack_channel,
+                                         slackchannel,
                                          [
                                             [
                                                 title      : "${jobName}, build #${env.BUILD_NUMBER}",
