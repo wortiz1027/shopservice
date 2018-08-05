@@ -18,9 +18,48 @@ def failedTestsString = "```"
 
 def slack_channel = '#springboot'
 
-def notification(String type, String status) {
+def notification(String type, String status, String color) {
     switch(type) {
-        case "slack" : slack_notification(text, channel, attachments)
+        case "slack" : 
+                      slack_notification("",
+                                         slack_channel,
+                                         [
+                                            [
+                                                title      : "${jobName}, build #${env.BUILD_NUMBER}",
+                                                title_link : "${env.BUILD_URL}",
+                                                color      : "${color}",
+                                                text       : "${status}\n${author}",
+                                                "mrkdwn_in": [
+                                                              "fields"
+                                                ],
+                                                fields: [
+                                                          [
+                                                           title: "Branch",
+                                                           value: "${env.GIT_BRANCH}",
+                                                           short: true
+                                                          ],
+                                                          [
+                                                           title: "Test Results",
+                                                           value: "${testSummary}",
+                                                           short: true
+                                                          ],
+                                                          [
+                                                           title: "Last Commit",
+                                                           value: "${message}",
+                                                           short: false
+                                                          ]
+                                                ]
+                                            ],
+                                            [
+                                              title: "Failed Tests",
+                                              color: "${color}",
+                                              text: "${failedTestsString}",
+                                              "mrkdwn_in": [
+                                                            "text"
+                                                           ],                                                
+                                            ]
+                                         ])  
+
         case "email" : email_notification(text, channel, attachments)
         break
             println "default ${type} - ${status}"
@@ -102,7 +141,7 @@ def populateGlobalVariables = {
 }
 
 node {
-
+    def mvnHome = tool 'Maven_3_5_4'
     def buildColor = "success"
     def jobName = "${env.JOB_NAME}"
 
@@ -117,45 +156,7 @@ node {
               checkout scm      
         } catch (err) {
             buildColor = "danger"
-            slack_notification("",
-                                slack_channel,
-                                [
-                                    [
-                                        title: "${jobName}, build #${env.BUILD_NUMBER}",
-                                        title_link: "${env.BUILD_URL}",
-                                        color: "${buildColor}",
-                                        text: "${buildStatus}\n${author}",
-                                        "mrkdwn_in": [
-                                        "fields"
-                                        ],
-                                        fields: [
-                                        [
-                                            title: "Branch",
-                                            value: "${env.GIT_BRANCH}",
-                                            short: true
-                                        ],
-                                        [
-                                            title: "Test Results",
-                                            value: "${testSummary}",
-                                            short: true
-                                        ],
-                                        [
-                                            title: "Last Commit",
-                                            value: "${message}",
-                                            short: false
-                                        ]
-                                        ]
-                                    ],
-                                    [
-                                        title: "Failed Tests",
-                                        color: "${buildColor}",
-                                        text: "${failedTestsString}",
-                                        "mrkdwn_in": [
-                                        "text"
-                                        ],
-                                        
-                                    ]
-                                ])
+            email_notification("", buildStatus, buildColor)
         }  // fin try - catch 
     }// fin stage setup
 
