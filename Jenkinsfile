@@ -16,7 +16,6 @@ def total = 0
 def failed = 0
 def skipped = 0
 def failedTestsString = "```"
-def token = "xils32v8TPRCgFooMC3P5iqN"
 
 def notification(String type, String status) {
     switch(type) {
@@ -27,20 +26,21 @@ def notification(String type, String status) {
     }
 }
 
-def slack_notification(text, channel, attachments) {    
-    def slackURL    = 'https://soa-developer.slack.com/services/hooks/jenkins-ci/'
-    def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png'
+def slack_notification(text, channel, attachments) {
+    def slack_user  = "Jenkins"
+    def slack_token = "25DwwRtqn7AVWpeTDGbfmjGc"
+    def slack_url   = 'https://soa-developer.slack.com/services/hooks/jenkins-ci?token=${slack_token}'
+    def slack_Icon  = 'https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png'
 
     def payload = JsonOutput.toJson([
-                                     token: "xils32v8TPRCgFooMC3P5iqN",
-                                     text: text,
-                                     channel  : channel,
-                                     username : "Jenkins",
-                                     icon_url : jenkinsIcon,
-                                     attachments: attachments
+                                     channel     : channel,
+                                     text        : text,                
+                                     username    : slack_user,
+                                     icon_url    : slack_Icon,
+                                     attachments : attachments
                                     ])
 
-    sh "curl -X POST --data-urlencode \'payload=${payload}\' ${slackURL}"
+    sh "curl -v -X POST --data-urlencode \'payload=${payload}\' ${slack_url}"
 }
 
 def email_notification(text, channel, attachments) {
