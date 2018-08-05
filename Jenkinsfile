@@ -29,7 +29,7 @@ def notification(String type, String status) {
 def slack_notification(text, channel, attachments) {
     def slack_user  = "Jenkins"
     def slack_token = "25DwwRtqn7AVWpeTDGbfmjGc"
-    def slack_url   = 'https://soa-developer.slack.com/services/hooks/jenkins-ci?token=${slack_token}'
+    def slack_url   = 'https://soa-developer.slack.com/services/hooks/jenkins-ci?token='
     def slack_Icon  = 'https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png'
 
     def payload = JsonOutput.toJson([
@@ -40,7 +40,7 @@ def slack_notification(text, channel, attachments) {
                                      attachments : attachments
                                     ])
 
-    sh "curl -v -X POST --data-urlencode \'payload=${payload}\' ${slack_url}"
+    sh "curl -v -X POST --data-urlencode \'payload=${payload}\' ${slack_url}${slack_token}"
 }
 
 def email_notification(text, channel, attachments) {
