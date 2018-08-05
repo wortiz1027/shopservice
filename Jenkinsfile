@@ -74,7 +74,7 @@ def notification(String type, String status, String color, String text, String j
     switch(type) {
         case "slack" : 
                       def slackchannel = "#springboot"
-                      slack_notification("",
+                      slack_notification(text,
                                          slackchannel,
                                          [
                                             [
@@ -113,7 +113,7 @@ def notification(String type, String status, String color, String text, String j
                                             ]
                                          ])  
 
-        case "email" : email_notification(text, channel, attachments)
+        case "email" : email_notification(text, slackchannel)
         break
             println "default ${type} - ${status}"
     }
@@ -136,7 +136,7 @@ def slack_notification(text, channel, attachments) {
     sh "curl -v -X POST --data-urlencode \'payload=${slack_data}\' ${slack_url}${slack_token}"
 }
 
-def email_notification(text, channel, attachments) {
+def email_notification(text, channel) {
     
 }
 
