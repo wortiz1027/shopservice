@@ -27,7 +27,7 @@ node {
     stage('setup') { 
          
         populateGlobalVariables() 
-        sh (echo "'Iniciando configuracion...'" + ${author}) 
+        sh ("echo 'Iniciando configuracion... " + ${author} +"'") 
         def buildStatus = currentBuild.result == null ? "Success" : currentBuild.result 
 
         try {                                        
