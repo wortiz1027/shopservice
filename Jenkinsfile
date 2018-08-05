@@ -153,10 +153,11 @@ node {
         def buildStatus = currentBuild.result == null ? "Success" : currentBuild.result 
 
         try {                                        
-              checkout scm      
+              checkout scm
+              notification("slack", buildStatus, buildColor)
         } catch (err) {
             buildColor = "danger"
-            email_notification("", buildStatus, buildColor)
+            notification("slack", buildStatus, buildColor)
         }  // fin try - catch 
     }// fin stage setup
 
