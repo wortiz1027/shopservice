@@ -70,7 +70,7 @@ def populateGlobalVariables = {
     testSummary = getTestSummary()
 }
 
-def notification(String type, String status, String color, String text, String job_name, String author, String testSummary, String message) {
+def notification(String type, String status, String color, String text, String job_name, String author, String testSummary, String message, String failedTestsString) {
     switch(type) {
         case "slack" : 
                       def slackchannel = "#springboot"
@@ -156,10 +156,10 @@ node {
 
         try {                                        
               checkout scm              
-              notification("slack", buildStatus, buildColor, "Conexion exitosa al repositorio ${url} ...", jobName, author, testSummary, message)
+              notification("slack", buildStatus, buildColor, "Conexion exitosa al repositorio ${url} ...", jobName, author, testSummary, message, failedTestsString)
         } catch (err) {
             buildColor = "danger"
-            notification("slack", buildStatus, buildColor, "Error conectando al repositorio ${url} ...", jobName, author, testSummary, message)
+            notification("slack", buildStatus, buildColor, "Error conectando al repositorio ${url} ...", jobName, author, testSummary, message, failedTestsString)
         }  // fin try - catch 
     }// fin stage setup
 
