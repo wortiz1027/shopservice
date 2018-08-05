@@ -16,6 +16,60 @@ def failed      = 0
 def skipped     = 0
 def failedTestsString = "```"
 
+def getGitAuthor = {
+    def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
+    author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
+    echo '--------------------------------------------> ${author}' 
+}
+
+def getLastCommitMessage = {
+    message = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
+}
+
+@NonCPS
+def getTestSummary = { ->
+    def testAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+    def summary = ""
+    if (testAction != null) {
+        total   = testAction.getTotalCount()
+        failed  = testAction.getFailCount()
+        skipped = testAction.getSkipCount() 
+
+        summary = "Passed : ${total - failed - skipped}"
+        summary = "${summary}, Failed: ${failed}"
+        summary = "${summary}, Skipped: ${skipped}"
+    } else {
+        summary = "No se encontraron test para ejecutar"
+    }
+
+    return summary
+}
+
+@NonCPS
+def getFailedTests = { ->
+    def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)    
+
+    if (testResultAction != null) {
+        def failedTests = testResultAction.getFailedTests()
+
+        if (failedTests.size() > 9) {
+            failedTests = failedTests.subList(0, 8)
+        }
+
+        for(CaseResult cr : failedTests) {
+            failedTestsString = failedTestsString + "${cr.getFullDisplayName()}:\n${cr.getErrorDetails()}\n\n"
+        }
+        failedTestsString = failedTestsString + "```"
+    }
+    return failedTestsString
+}
+
+def populateGlobalVariables = {
+    getLastCommitMessage()
+    getGitAuthor()
+    testSummary = getTestSummary()
+}
+
 def notification(String type, String status, String color, String text, String job_name) {
     switch(type) {
         case "slack" : 
@@ -84,60 +138,6 @@ def slack_notification(text, channel, attachments) {
 
 def email_notification(text, channel, attachments) {
     
-}
-
-def getGitAuthor = {
-    def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
-    author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
-    echo '--------------------------------------------> ${author}' 
-}
-
-def getLastCommitMessage = {
-    message = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
-}
-
-@NonCPS
-def getTestSummary = { ->
-    def testAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
-    def summary = ""
-    if (testAction != null) {
-        total   = testAction.getTotalCount()
-        failed  = testAction.getFailCount()
-        skipped = testAction.getSkipCount() 
-
-        summary = "Passed : ${total - failed - skipped}"
-        summary = "${summary}, Failed: ${failed}"
-        summary = "${summary}, Skipped: ${skipped}"
-    } else {
-        summary = "No se encontraron test para ejecutar"
-    }
-
-    return summary
-}
-
-@NonCPS
-def getFailedTests = { ->
-    def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)    
-
-    if (testResultAction != null) {
-        def failedTests = testResultAction.getFailedTests()
-
-        if (failedTests.size() > 9) {
-            failedTests = failedTests.subList(0, 8)
-        }
-
-        for(CaseResult cr : failedTests) {
-            failedTestsString = failedTestsString + "${cr.getFullDisplayName()}:\n${cr.getErrorDetails()}\n\n"
-        }
-        failedTestsString = failedTestsString + "```"
-    }
-    return failedTestsString
-}
-
-def populateGlobalVariables = {
-    getLastCommitMessage()
-    getGitAuthor()
-    testSummary = getTestSummary()
 }
 
 node {
