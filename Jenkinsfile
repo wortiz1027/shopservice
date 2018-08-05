@@ -16,7 +16,7 @@ def failed      = 0
 def skipped     = 0
 def failedTestsString = "```"
 
-def notification(String type, String status, String color, String text) {
+def notification(String type, String status, String color, String text, String job_name) {
     switch(type) {
         case "slack" : 
                       def slackchannel = "#springboot"
@@ -24,7 +24,7 @@ def notification(String type, String status, String color, String text) {
                                          slackchannel,
                                          [
                                             [
-                                                title      : "${jobName}, build #${env.BUILD_NUMBER}",
+                                                title      : "${job_name}, build #${env.BUILD_NUMBER}",
                                                 title_link : "${env.BUILD_URL}",
                                                 color      : "${color}",
                                                 text       : "${status}\n${author}",
@@ -144,7 +144,7 @@ node {
     def buildColor = "success"
     def jobName = "${env.JOB_NAME}"
     def url = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
-    
+
     jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
     stage('setup') { 
@@ -155,10 +155,10 @@ node {
         try {                                        
               checkout scm
               
-              notification("slack", buildStatus, buildColor, "Conexion exitosa al repositorio ${url}")
+              notification("slack", buildStatus, buildColor, "Conexion exitosa al repositorio ${url} ...", jobName)
         } catch (err) {
             buildColor = "danger"
-            notification("slack", buildStatus, buildColor, "")
+            notification("slack", buildStatus, buildColor, "Error conectando al repositorio ${url} ...", jobName)
         }  // fin try - catch 
     }// fin stage setup
 
