@@ -16,7 +16,7 @@ def failed      = 0
 def skipped     = 0
 def failedTestsString = "```"
 
-def slack_channel = '#springboot'
+def slack_channel = "#springboot" 
 
 def notification(String type, String status, String color) {
     switch(type) {
