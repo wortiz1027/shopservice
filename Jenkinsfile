@@ -141,22 +141,21 @@ def populateGlobalVariables = {
 }
 
 node {
-    def mvnHome = tool 'Maven_3_5_4'
+    def mvnHome    = tool 'Maven_3_5_4'
     def buildColor = "success"
-    def jobName = "${env.JOB_NAME}"
-    def url = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
+    def jobName    = "${env.JOB_NAME}"
+    def url        = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
 
     jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
     stage('setup') { 
          
         populateGlobalVariables() 
-        echo 'Iniciando configuracion... ${author}' 
+        sh (echo "'Iniciando configuracion...'" + ${author}) 
         def buildStatus = currentBuild.result == null ? "Success" : currentBuild.result 
 
         try {                                        
-              checkout scm
-              
+              checkout scm              
               notification("slack", buildStatus, buildColor, "Conexion exitosa al repositorio ${url} ...", jobName)
         } catch (err) {
             buildColor = "danger"
