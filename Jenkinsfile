@@ -142,7 +142,7 @@ def email_notification(text, channel) {
 
 node {
     def mvnHome    = tool 'Maven_3_5_4'
-    def buildColor = "success"
+    def buildColor = "good"
     def jobName    = "${env.JOB_NAME}"
     def url        = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
 
