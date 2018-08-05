@@ -148,8 +148,9 @@ node {
     jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
     stage('setup') { 
+         
+        populateGlobalVariables() 
         echo 'Iniciando configuracion... ${author}' 
-        populateGlobalVariables()  
         def buildStatus = currentBuild.result == null ? "Success" : currentBuild.result 
 
         try {                                        
