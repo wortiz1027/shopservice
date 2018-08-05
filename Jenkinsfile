@@ -16,65 +16,6 @@ def failed      = 0
 def skipped     = 0
 def failedTestsString = "```"
 
-node {
-    def mvnHome    = tool 'Maven_3_5_4'
-    def buildColor = "success"
-    def jobName    = "${env.JOB_NAME}"
-    def url        = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
-
-    jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
-
-    stage('setup') { 
-         
-        populateGlobalVariables() 
-        sh ("echo 'Iniciando configuracion... " + ${author} +"'") 
-        def buildStatus = currentBuild.result == null ? "Success" : currentBuild.result 
-
-        try {                                        
-              checkout scm              
-              notification("slack", buildStatus, buildColor, "Conexion exitosa al repositorio ${url} ...", jobName)
-        } catch (err) {
-            buildColor = "danger"
-            notification("slack", buildStatus, buildColor, "Error conectando al repositorio ${url} ...", jobName)
-        }  // fin try - catch 
-    }// fin stage setup
-
-    stage('test') {
-        parallel 'unit-test': {
-                        try {
-                            echo 'Ejecutando pruebas unitarias...'
-                        } catch(err) {
-                            throw err
-                        }                               
-                  },
-                  'integration-test': {
-                        try {
-                            echo 'Ejecutando pruebas de integracion...'
-                        } catch(err) {
-                            throw err   
-                        }
-                    }
-    }        
-    
-
-    stage('build') {
-                    
-    }
-
-    stage('archive') {
-                
-    }
-
-    stage('deploy') {
-                    
-    }
-
-    stage('notification') {
-                    
-    }
-  
-}
-
 def notification(String type, String status, String color, String text, String job_name) {
     switch(type) {
         case "slack" : 
@@ -197,4 +138,63 @@ def populateGlobalVariables = {
     getLastCommitMessage()
     getGitAuthor()
     testSummary = getTestSummary()
+}
+
+node {
+    def mvnHome    = tool 'Maven_3_5_4'
+    def buildColor = "success"
+    def jobName    = "${env.JOB_NAME}"
+    def url        = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
+
+    jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
+
+    stage('setup') { 
+         
+        populateGlobalVariables() 
+        sh ("echo 'Iniciando configuracion... " + ${author} +"'") 
+        def buildStatus = currentBuild.result == null ? "Success" : currentBuild.result 
+
+        try {                                        
+              checkout scm              
+              notification("slack", buildStatus, buildColor, "Conexion exitosa al repositorio ${url} ...", jobName)
+        } catch (err) {
+            buildColor = "danger"
+            notification("slack", buildStatus, buildColor, "Error conectando al repositorio ${url} ...", jobName)
+        }  // fin try - catch 
+    }// fin stage setup
+
+    stage('test') {
+        parallel 'unit-test': {
+                        try {
+                            echo 'Ejecutando pruebas unitarias...'
+                        } catch(err) {
+                            throw err
+                        }                               
+                  },
+                  'integration-test': {
+                        try {
+                            echo 'Ejecutando pruebas de integracion...'
+                        } catch(err) {
+                            throw err   
+                        }
+                    }
+    }        
+    
+
+    stage('build') {
+                    
+    }
+
+    stage('archive') {
+                
+    }
+
+    stage('deploy') {
+                    
+    }
+
+    stage('notification') {
+                    
+    }
+  
 }
