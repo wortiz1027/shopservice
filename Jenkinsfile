@@ -70,6 +70,7 @@ def populateGlobalVariables = {
     testSummary = getTestSummary()
 }
 
+@NonCPS
 def notification(String type, String status, String color, String text, String job_name, String author) {
     switch(type) {
         case "slack" : 
