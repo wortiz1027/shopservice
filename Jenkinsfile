@@ -143,7 +143,8 @@ node {
     def mvnHome = tool 'Maven_3_5_4'
     def buildColor = "success"
     def jobName = "${env.JOB_NAME}"
-
+    def url = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
+    
     jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
     stage('setup') { 
@@ -153,7 +154,7 @@ node {
 
         try {                                        
               checkout scm
-              def url = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
+              
               notification("slack", buildStatus, buildColor, "Conexion exitosa al repositorio ${url}")
         } catch (err) {
             buildColor = "danger"
