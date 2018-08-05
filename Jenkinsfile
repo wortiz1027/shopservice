@@ -154,7 +154,7 @@ node {
     def jobName    = "${env.JOB_NAME}"
     def git_url    = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
 
-    jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
+    //jobName = jobName.getAt(0..(jobName.indexOf('/') - 1))
 
     stage('setup') { 
          
